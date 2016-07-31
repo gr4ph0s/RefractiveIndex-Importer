@@ -194,4 +194,4 @@ if __name__ == "__main__":
                                 g=lunchTag,
                                 description="TREFLECTION_INDEX", 
                                 icon=bmp,
-                                info=c4d.TAG_EXPRESSION|c4d.TAG_VISIBLE)
+                                info=c4d.TAG_EXPRESSION|c4d.TAG_VISIBLE|c4d.TAG_MULTIPLE)
