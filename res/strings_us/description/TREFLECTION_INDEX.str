@@ -1,23 +1,11 @@
 STRINGTABLE TREFLECTION_INDEX
 {        
-        REFLECTION_INDEX                    "reflectionindex.info Setting";
-        REFLECTION_INDEX_SPLINE_RED         "Red";
-        REFLECTION_INDEX_SPLINE_GREEN       "Green";
-        REFLECTION_INDEX_SPLINE_BLUE        "Blue";
+        REFLECTION_INDEX                "reflectionindex.info Setting";
+	    REFLECTION_INDEX_SPLINE_RED		"Red";
+	    REFLECTION_INDEX_SPLINE_GREEN	"Green";
+	    REFLECTION_INDEX_SPLINE_BLUE	"Bleu";
 
-        REFLECTION_INDEX_SPLINE_RED_GRP     "Red";
-        REFLECTION_INDEX_SPLINE_GREEN_GRP   "Green";
-        REFLECTION_INDEX_SPLINE_BLUE_GRP    "Blue";
+	    ID_TEST							"Test";
 
-        REFLECTION_INDEX_SPLINE_RED_NUM_POINTS      "Number Of Points";
-        REFLECTION_INDEX_SPLINE_GREEN_NUM_POINTS    "Number Of Points";
-        REFLECTION_INDEX_SPLINE_BLUE_NUM_POINTS     "Number Of Points";
-
-        METALTYPE           "Metal";
-        ALUMINIUM           "Aluminium";
-        OR                  "OR";
-
-        ID_CREATE                           "Create";
-
-        REFLECTION_INDEX                    "";
-}
+        REFLECTION_INDEX                 "";
+}   
