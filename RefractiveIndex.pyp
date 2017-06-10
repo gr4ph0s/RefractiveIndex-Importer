@@ -35,8 +35,6 @@ if bool(1):
 
 import c4d
 import os
-import math
-import json
 
 with localimport('.') as _importer:
     from res.src.Const import  Const
