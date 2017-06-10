@@ -50,7 +50,7 @@ with localimport('.') as _importer:
 # ==============================================
 
 __author__ = 'Adam Maxime - Graphos <gr4ph0s(at)hotmail.fr>'
-__project__ = "https://github.com/gr4ph0s/PoseMaster"
+__project__ = "https://github.com/gr4ph0s/RefractiveIndex-Importer"
 __version__ = '1.1'
 
 class lunchTag(c4d.plugins.TagData):
