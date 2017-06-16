@@ -48,7 +48,7 @@ with localimport('.') as _importer:
 # ==============================================
 
 __author__ = 'Adam Maxime - Graphos <gr4ph0s(at)hotmail.fr>'
-__project__ = "https://github.com/gr4ph0s/RefractiveIndex-Importer"
+__project__ = "https://github.com/gr4ph0s/PoseMaster"
 __version__ = '1.1'
 
 class lunchTag(c4d.plugins.TagData):
@@ -58,6 +58,7 @@ class lunchTag(c4d.plugins.TagData):
     def Init(self, node):
         """ Init method for a TagData"""
         self.dataSpline = [None]*3
+        self.dataGradient = [None]*4
         self.toInit = True
 
         self.miscFunction = MiscFunction()
@@ -84,6 +85,7 @@ class lunchTag(c4d.plugins.TagData):
 
         #Put in memory the spline data acording the Preset
         self.ui.set_spline_data(self, 4, True)
+        self.ui.set_gradient_data(self, 4, True)
 
         #Create Red section
         self.ud.create_group(Const.UI_GROUP_CURVE_RED,"Red",self.ud.idGroups[Const.UI_GROUP_CURVE])
@@ -91,6 +93,7 @@ class lunchTag(c4d.plugins.TagData):
         self.ud.create_bool(Const.UI_BOOL_RED_X,False,self.ud.idGroups[Const.UI_GROUP_CURVE_RED],"Invert X")
         self.ud.create_bool(Const.UI_BOOL_RED_Y,False,self.ud.idGroups[Const.UI_GROUP_CURVE_RED],"Invert Y")
         self.ud.create_spline(Const.UI_SPLINE_RED,self.dataSpline[0],self.ud.idGroups[Const.UI_GROUP_CURVE_RED],"Red")
+        self.ud.create_gradient(Const.UI_GRADIENT_RED,self.dataGradient[0],self.ud.idGroups[Const.UI_GROUP_CURVE_RED],"Red")
 
         #Create Green section
         self.ud.create_group(Const.UI_GROUP_CURVE_GREEN,"Green",self.ud.idGroups[Const.UI_GROUP_CURVE])
@@ -98,6 +101,7 @@ class lunchTag(c4d.plugins.TagData):
         self.ud.create_bool(Const.UI_BOOL_GREEN_X,False,self.ud.idGroups[Const.UI_GROUP_CURVE_GREEN],"Invert X")
         self.ud.create_bool(Const.UI_BOOL_GREEN_Y,False,self.ud.idGroups[Const.UI_GROUP_CURVE_GREEN],"Invert Y")
         self.ud.create_spline(Const.UI_SPLINE_GREEN,self.dataSpline[1],self.ud.idGroups[Const.UI_GROUP_CURVE_GREEN],"Green")
+        self.ud.create_gradient(Const.UI_GRADIENT_GREEN,self.dataGradient[1],self.ud.idGroups[Const.UI_GROUP_CURVE_GREEN],"Green")
 
         #Create Blue section
         self.ud.create_group(Const.UI_GROUP_CURVE_BLUE,"Blue",self.ud.idGroups[Const.UI_GROUP_CURVE])
@@ -105,6 +109,12 @@ class lunchTag(c4d.plugins.TagData):
         self.ud.create_bool(Const.UI_BOOL_BLUE_X,False,self.ud.idGroups[Const.UI_GROUP_CURVE_BLUE],"Invert X")
         self.ud.create_bool(Const.UI_BOOL_BLUE_Y,False,self.ud.idGroups[Const.UI_GROUP_CURVE_BLUE],"Invert Y")
         self.ud.create_spline(Const.UI_SPLINE_BLUE,self.dataSpline[2],self.ud.idGroups[Const.UI_GROUP_CURVE_BLUE],"Blue")
+        self.ud.create_gradient(Const.UI_GRADIENT_BLUE,self.dataGradient[2],self.ud.idGroups[Const.UI_GROUP_CURVE_BLUE],"Blue")
+
+        #Create RGB section
+        self.ud.create_group(Const.UI_GROUP_RGB,"RGB",self.ud.idGroups[Const.UI_GROUP_CURVE])
+        self.ud.create_int_slider(Const.UI_SLIDER_RGB,50,self.ud.idGroups[Const.UI_GROUP_RGB],"Precision")
+        self.ud.create_gradient(Const.UI_GRADIENT_RGB,self.dataGradient[3],self.ud.idGroups[Const.UI_GROUP_RGB],"RGB")
 
     def create_create_tab(self):
         """
@@ -162,10 +172,12 @@ class lunchTag(c4d.plugins.TagData):
             currentNbPts, currentInv, currentCycle = self.ud.get_current_data()
 
             if self.ud.oldNbPoints != currentNbPts:
-                diffs = self.miscFunction.get_diff(self.ud.oldNbPoints,currentNbPts)
+                diffs = self.miscFunction.get_diff(self.ud.oldNbPoints, currentNbPts)
                 for diff in diffs:
-                    self.ui.set_spline_data(self, diff)
-                    self.ud.create_spline(diff, self.dataSpline[diff])
+                    if diff < 3:
+                        self.ui.set_spline_data(self, diff)
+                        self.ud.create_spline(diff, self.dataSpline[diff])
+
                 self.ud.oldNbPoints = currentNbPts
                 
 
@@ -179,11 +191,19 @@ class lunchTag(c4d.plugins.TagData):
 
                     self.ui.set_spline_data(self, y)
                     self.ud.create_spline(y, self.dataSpline[y])
+
                 self.ud.oldInvert = currentInv
 
             if self.ud.oldCycle != currentCycle:
                 self.ui.refresh_cycle(self, True)
                 self.ud.oldCycle = currentCycle
+
+            for i in xrange(3):
+                self.dataSpline[i] = node[self.ud.idSplines[i]]
+
+            for i in xrange(4):
+                self.ui.set_gradient_data(self, i)
+                self.ud.create_gradient(i, self.dataGradient[i])
 
         #If we press a button
         if type == c4d.MSG_DESCRIPTION_COMMAND:
@@ -213,7 +233,7 @@ if __name__ == "__main__":
     bmp = c4d.bitmaps.BaseBitmap()
     bmp.InitWith(os.path.join(dir, "res", "RefractiveIndex.png"))
     c4d.plugins.RegisterTagPlugin(id=Const.PLUGIN_ID,
-                                str='refractiveindex', 
+                                str='Refractive-Index v{}'.format(Const.VERSION),
                                 g=lunchTag,
                                 description="TREFLECTION_INDEX", 
                                 icon=bmp,

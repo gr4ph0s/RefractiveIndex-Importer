@@ -16,16 +16,17 @@ class UD():
         #List who gonna store our id of our UserData
         # 0 = R // 1 = G // 2 = B
         self.idCycle = [None] * 1
-        self.idGroups = [None] * 6
+        self.idGroups = [None] * 7
         self.idSplines = [None] * 3
-        self.idNbPoints = [None] * 3
+        self.idNbPoints = [None] * 4
         self.idInvert = [None] * 6
         self.idSeparator = [None] * 3
         self.idStringInput = [None] * 7
         self.idButtons = [None] * 3
+        self.idGradient = [None] * 4
 
         self.oldCycle = None
-        self.oldNbPoints = [None] * 3
+        self.oldNbPoints = [None] * 4
         self.oldInvert = [None] * 6
 
     def create_group(self, groupId, name, parentGroup=None, columns=None, shortname=None, titleBar=True, Open=False):
@@ -170,6 +171,26 @@ class UD():
                     self.obj.SetUserDataContainer(id, bc)
             return self.idCycle
 
+    def create_gradient(self, colorId, gradientData, parentGroup=None, gradientText=""):
+        """
+        Create a Gradient Ui
+        :param colorId: int => ID of hte created gradient ID
+        :param splineData: c4d.GradientData => Data for the gradient
+        :param parentGroup: int => groupID of the parent group
+        :param splineText: str => the name of the gradient
+        :return: The list of Spline with the newly created one
+        """
+        if (self.idGradient[colorId]) is None:
+            bc = c4d.GetCustomDatatypeDefault(c4d.CUSTOMDATATYPE_GRADIENT)  # Create default container
+            bc[c4d.DESC_NAME] = gradientText  # Rename the entry
+            bc[c4d.DESC_PARENTGROUP] = parentGroup
+            self.idGradient[colorId] = self.obj.AddUserData(bc)  # Add userdata container
+            self.obj[self.idGradient[colorId]] = gradientData
+            return self.idGradient
+        else:
+            self.obj[self.idGradient[colorId]] = gradientData
+            return self.idGradient[colorId]
+
     def create_spline(self, colorId, splineData, parentGroup=None, splineText=""):
         """
         Create a Spline Ui
@@ -180,7 +201,7 @@ class UD():
         :return: The list of Spline with the newly created one
         """
         if (self.idSplines[colorId]) is None:
-            bc = c4d.GetCustomDatatypeDefault(1009060)  # Create default container
+            bc = c4d.GetCustomDatatypeDefault(c4d.CUSTOMDATATYPE_SPLINE)  # Create default container
             bc[c4d.DESC_NAME] = splineText  # Rename the entry
             bc[c4d.DESC_PARENTGROUP] = parentGroup
             self.idSplines[colorId] = self.obj.AddUserData(bc)  # Add userdata container
@@ -222,9 +243,10 @@ class UD():
         bufferCycle.append(self.obj[self.idCycle[Const.UI_CYCLE]])
 
         bufferNbPts = list()
-        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SPLINE_RED]])
-        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SPLINE_GREEN]])
-        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SPLINE_BLUE]])
+        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SLIDER_RED]])
+        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SLIDER_GREEN]])
+        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SLIDER_BLUE]])
+        bufferNbPts.append(self.obj[self.idNbPoints[Const.UI_SLIDER_RGB]])
 
         bufferInvert = list()
         bufferInvert.append(self.obj[self.idInvert[Const.UI_BOOL_RED_X]])
@@ -304,6 +326,7 @@ class UD():
         bc[5] = self.create_bc_from_list(self.idSeparator)
         bc[6] = self.create_bc_from_list(self.idStringInput)
         bc[7] = self.create_bc_from_list(self.idButtons)
+        bc[8] = self.create_bc_from_list(self.idGradient)
         currentBC = self.obj.GetDataInstance()
         currentBC[Const.PLUGIN_ID] = bc
 
@@ -334,3 +357,4 @@ class UD():
         self.idSeparator = self.create_list_from_bc(bc[5])
         self.idStringInput = self.create_list_from_bc(bc[6])
         self.idButtons = self.create_list_from_bc(bc[7])
+        self.idGradient = self.create_list_from_bc(bc[8])

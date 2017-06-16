@@ -3,7 +3,7 @@ class Const():
     Class for hold all our constant used in our plugin
     """
     PLUGIN_ID = 1037819
-    VERSION = 1.1
+    VERSION = 1.2
 
     X_INVERTED = 1
     Y_INVERTED = 2
@@ -13,7 +13,8 @@ class Const():
     UI_GROUP_CURVE_RED = 2
     UI_GROUP_CURVE_GREEN = 3
     UI_GROUP_CURVE_BLUE = 4
-    UI_GROUP_CREATE = 5
+    UI_GROUP_RGB = 5
+    UI_GROUP_CREATE = 6
 
     UI_CYCLE = 0
 
@@ -25,9 +26,16 @@ class Const():
     UI_SPLINE_GREEN = 1
     UI_SPLINE_BLUE = 2
 
+    UI_GRADIENT_RED = 0
+    UI_GRADIENT_GREEN = 1
+    UI_GRADIENT_BLUE = 2
+    UI_GRADIENT_RGB = 3
+
+
     UI_SLIDER_RED = 0
     UI_SLIDER_GREEN = 1
     UI_SLIDER_BLUE = 2
+    UI_SLIDER_RGB = 3
 
     UI_BOOL_RED_X = 0
     UI_BOOL_GREEN_X = 1

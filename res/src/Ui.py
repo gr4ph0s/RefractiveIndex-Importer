@@ -34,6 +34,67 @@ class Ui():
         data = self.get_curve_data(k, n, nbPoints)
         gedialog.dataSpline[id] = self.get_curve_spline(data, mode)
 
+
+
+    def __set_gradient_data(self, gedialog, id, first):
+        """
+        set gradient data of the according ID
+        :param id: int => 0 = R // 1 = G // 2 = B
+        :param first: boolf => if is the first tiem we build the ui
+        """
+        #Get rgb data from the json according cycle key value
+        nbPoints = 50
+        if not first:
+            nbPoints = gedialog.ud.obj[gedialog.ud.idNbPoints[id]]
+
+        if id != 3:
+            gedialog.dataGradient[id] = self.spline_data_to_gradiant_data(nbPoints, gedialog.dataSpline[id])
+
+        else:
+            gedialog.dataGradient[id] = self.spline_data_to_gradiant_data(nbPoints,
+                                                                          gedialog.dataSpline[0],
+                                                                          gedialog.dataSpline[1],
+                                                                          gedialog.dataSpline[2])
+
+    def spline_data_to_gradiant_data(self, nb_point, spline_data_r, spline_data_g=None, spline_data_b=None):
+        """
+        Convert c4d.SplineData to c4d.Gradient
+        1 argument = used in 3 vector color (greyscale color)
+        3 arguments = full rgb color
+        :param spline_data_r: c4d.SplineData Red spline data
+        :param spline_data_g: c4d.SplineData Green Spline data
+        :param spline_data_b: c4d.SplineData Blue Spline data
+        :return: c4d.Gradient coorespondance of the c4d.SplineData
+        """
+        greyscale = False
+        gradient = c4d.Gradient()
+
+
+        if spline_data_g is None or spline_data_b is None:
+            greyscale = True
+
+        if greyscale:
+            knots = spline_data_r.GetKnots()
+
+            for knot in knots:
+                knot_data = knot["vPos"]
+                v_color = c4d.Vector(knot_data.y)
+                gradient.InsertKnot(col=v_color, pos=knot_data.x)
+
+        else:
+            for i in xrange(nb_point+1):
+                step = float((1.00/ nb_point) * i)
+                r = spline_data_r.GetPoint(step).y
+                g = spline_data_g.GetPoint(step).y
+                b = spline_data_b.GetPoint(step).y
+
+                color = c4d.Vector(r, g, b)
+                gradient.InsertKnot(color, pos=step)
+
+
+
+        return gradient
+
     def set_spline_data(self, gedialog, id = 4 , first = False):
         """
         Set the spline data according self.dataSpline
@@ -41,10 +102,23 @@ class Ui():
         :param first: bool => if is the first time we build the ui
         """
         if id == 4:
-            for i in xrange(0,len(gedialog.dataSpline)):
+            for i in xrange(0, len(gedialog.dataSpline)):
                 self.__set_spline_data(gedialog, i, first)
         else:
             self.__set_spline_data(gedialog, id, first)
+
+    def set_gradient_data(self, gedialog, id = 4 , first = False):
+        """
+        Set the spline data according self.dataSpline
+        :param id: int => according id to set, if 4 set all splines
+        :param first: bool => if is the first time we build the ui
+        """
+        if id == 4:
+            for i in xrange(0,len(gedialog.dataGradient)):
+                self.__set_gradient_data(gedialog, i, first)
+        else:
+            self.__set_gradient_data(gedialog, id, first)
+            self.__set_gradient_data(gedialog, 3, first) #We also refresh rgb one
 
     def get_curve_data(self, k, n, nbPoints):
         """
@@ -129,6 +203,13 @@ class Ui():
         gedialog.ud.create_spline(Const.UI_SPLINE_RED, gedialog.dataSpline[0])
         gedialog.ud.create_spline(Const.UI_SPLINE_GREEN, gedialog.dataSpline[1])
         gedialog.ud.create_spline(Const.UI_SPLINE_BLUE, gedialog.dataSpline[2])
+
+        #Then reset GradienUi
+        self.set_gradient_data(gedialog)
+        gedialog.ud.create_gradient(Const.UI_GRADIENT_RED, gedialog.dataGradient[0])
+        gedialog.ud.create_gradient(Const.UI_GRADIENT_GREEN, gedialog.dataGradient[1])
+        gedialog.ud.create_gradient(Const.UI_GRADIENT_BLUE, gedialog.dataGradient[2])
+        gedialog.ud.create_gradient(Const.UI_GRADIENT_RGB, gedialog.dataGradient[3])
 
     def get_valid_data(self, gedialog):
         """
